@@ -12,5 +12,9 @@
       "../common/mixins",
       "./mixins"
     ]
+  },
+  "desk": {
+    "dataSource": null,
+    "public": true
   }
 }
