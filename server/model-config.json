@@ -14,7 +14,7 @@
     ]
   },
   "desk": {
-    "dataSource": null,
+    "dataSource": "db",
     "public": true
   }
 }
