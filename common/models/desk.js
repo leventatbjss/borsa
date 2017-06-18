@@ -2,7 +2,7 @@
 
 module.exports = function (Desk) {
 
-  Desk.available =function available() {
+  available =function available() {
     return "yes"
   }
 
