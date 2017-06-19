@@ -37,7 +37,7 @@ module.exports = function (Desk) {
     return sold;
   }
 
-  Desk.addSellOfferToDesk=function addSellOfferToDesk(targetDesk, price, now, trader, amount) {
+  Desk.addSellOfferToDesk = function addSellOfferToDesk(targetDesk, price, now, trader, amount) {
     let sold = sell(targetDesk, price, now, trader, amount)
     amount = amount - sold;
 
@@ -63,12 +63,12 @@ module.exports = function (Desk) {
       next = cur.next
       while (true) {
         if (!next) {
-          cur.next=offer
+          cur.next = offer
           return
         }
-        if (price>=cur.price && price<next.price){
-          cur.next=offer
-          offer.next=next
+        if (price >= cur.price && price < next.price) {
+          cur.next = offer
+          offer.next = next
           return
         }
         cur = next
