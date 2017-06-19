@@ -1,45 +1,80 @@
 'use strict';
 
+var SortedMap = require("collections/sorted-map");
+
 module.exports = function (Desk) {
 
-  available =function available() {
+  Desk.available = function available() {
     return "yes"
   }
 
-  function addSellDrawerToDesk(desk, drawer, price) {
-    if (!desk.drawers) {
-      desk.drawers[price] = drawer;
+  function sell(targetDesk, price, now, trader, amount) {
+    let sold = 0
+    let offer = targetDesk.buyHead;
+    while (offer && offer.price <= price && amount > 0) {
+      let transaction;
+      if (amount < offer.amount) {
+        transaction = {
+          buyer: trader,
+          seller: offer.trader,
+          amount: amount,
+          ts: now,
+        }
+        offer.amount -= amount
+        sold += amount
+      } else {
+        transaction = {
+          buyer: trader,
+          seller: offer.trader,
+          amount: offer.amount,
+          ts: now,
+        }
+        amount -= offer.amount
+        sold += offer.amount
+        offer = offer.next
+      }
     }
+    return sold;
   }
 
-  function addSellOfferToDesk(targetDesk, price, now, trader, amount) {
-    let drawer = targetDesk.drawers[price];
-    if (!drawer) {
-      drawer = {
-        price: price,
-        total: 0,
-      };
-      addSellDrawerToDesk(desk, drawer, price);
+  Desk.addSellOfferToDesk=function addSellOfferToDesk(targetDesk, price, now, trader, amount) {
+    let sold = sell(targetDesk, price, now, trader, amount)
+    amount = amount - sold;
 
-    }
-
-    let newOffer = {
+    let offer = {
       ts: now,
       trader: trader,
       amount: amount,
-    };
-
-    if (!drawer.offers) {
-      drawer.offers = [];
-      drawer.first = newOffer;
-      drawer.last = newOffer
+      price: price,
     }
 
-    drawer.offers.push(newOffer);
-    let previousLastOffer = drawer.last;
-    previousLastOffer.next = newOffer;
-    drawer.last = newOffer
+    if (!targetDesk.sellHead) {
+      targetDesk.sellHead = offer
+    } else {
+      let cur
+      let next = targetDesk.sellHead
 
+      if (price < next.price) {
+        offer.next = targetDesk.sellHead
+        targetDesk.sellHead = offer
+        return
+      }
+      cur = next
+      next = cur.next
+      while (true) {
+        if (!next) {
+          cur.next=offer
+          return
+        }
+        if (price>=cur.price && price<next.price){
+          cur.next=offer
+          offer.next=next
+          return
+        }
+        cur = next
+        next = cur.next
+      }
+    }
   }
 
   Desk.sellOffer = function (deskId, trader, price, amount, callback) {
