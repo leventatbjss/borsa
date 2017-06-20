@@ -23,10 +23,10 @@ describe("Adding offers to a single offer list of price [5]", () => {
       theDesk = {}
       t1 = Date.now()
       t2 = t1 + 1000
-      deskService.offerLay(theDesk, 5, t1, 'A', 100)
+      deskService.offerLayToDesk(theDesk, 5, t1, 'A', 100)
       expect(theDesk).toEqual(
         {
-          sellHead: {
+          lays: {
             ts: t1,
             trader: 'A',
             amount: 100,
@@ -37,10 +37,10 @@ describe("Adding offers to a single offer list of price [5]", () => {
   );
 
   test('Adding 4', () => {
-    deskService.offerLay(theDesk, 4, t2, 'B', 200)
+    deskService.offerLayToDesk(theDesk, 4, t2, 'B', 200)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           ts: t2,
           trader: 'B',
           amount: 200,
@@ -56,10 +56,10 @@ describe("Adding offers to a single offer list of price [5]", () => {
   })
 
   test('Adding 5', () => {
-      deskService.offerLay(theDesk, 5, t2, 'B', 200)
+      deskService.offerLayToDesk(theDesk, 5, t2, 'B', 200)
       expect(theDesk).toEqual(
         {
-          sellHead: {
+          lays: {
             ts: t1,
             trader: 'A',
             amount: 100,
@@ -76,10 +76,10 @@ describe("Adding offers to a single offer list of price [5]", () => {
   );
 
   test('Adding 6', () => {
-      deskService.offerLay(theDesk, 6, t2, 'C', 150)
+      deskService.offerLayToDesk(theDesk, 6, t2, 'C', 150)
       expect(theDesk).toEqual(
         {
-          sellHead: {
+          lays: {
             ts: t1,
             trader: 'A',
             amount: 100,
@@ -107,11 +107,11 @@ describe("Adding offers to an offer list of 2 offers with same price [5,5]", () 
       t1 = Date.now()
       t2 = t1 + 1000
       t3 = t2 + 1000
-      deskService.offerLay(theDesk, 5, t1, 'A', 100)
-      deskService.offerLay(theDesk, 5, t2, 'AA', 160)
+      deskService.offerLayToDesk(theDesk, 5, t1, 'A', 100)
+      deskService.offerLayToDesk(theDesk, 5, t2, 'AA', 160)
       expect(theDesk).toEqual(
         {
-          sellHead: {
+          lays: {
             price: 5, amount: 100, ts: t1, trader: 'A',
             next: {
               price: 5, amount: 160, ts: t2, trader: 'AA',
@@ -122,10 +122,10 @@ describe("Adding offers to an offer list of 2 offers with same price [5,5]", () 
   );
 
   test('Adding 4', () => {
-    deskService.offerLay(theDesk, 4, t3, 'B', 200)
+    deskService.offerLayToDesk(theDesk, 4, t3, 'B', 200)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 4, ts: t3, trader: 'B', amount: 200,
           next: {
             price: 5, ts: t1, trader: 'A', amount: 100,
@@ -139,10 +139,10 @@ describe("Adding offers to an offer list of 2 offers with same price [5,5]", () 
   })
 
   test('Adding 5', () => {
-      deskService.offerLay(theDesk, 5, t3, 'B', 200)
+      deskService.offerLayToDesk(theDesk, 5, t3, 'B', 200)
       expect(theDesk).toEqual(
         {
-          sellHead: {
+          lays: {
             price: 5, ts: t1, trader: 'A', amount: 100,
             next: {
               price: 5, ts: t2, trader: 'AA', amount: 160,
@@ -157,10 +157,10 @@ describe("Adding offers to an offer list of 2 offers with same price [5,5]", () 
   );
 
   test('Adding 6', () => {
-      deskService.offerLay(theDesk, 6, t3, 'C', 250)
+      deskService.offerLayToDesk(theDesk, 6, t3, 'C', 250)
       expect(theDesk).toEqual(
         {
-          sellHead: {
+          lays: {
             price: 5, ts: t1, trader: 'A', amount: 100,
             next: {
               price: 5, ts: t2, trader: 'AA', amount: 160,
@@ -187,12 +187,12 @@ describe("Adding offers to an offer list of 3 offers with incremental prices [5,
       t2 = t1 + 1000
       t3 = t2 + 1000
       tx = t3 + 1000
-      deskService.offerLay(theDesk, 5, t1, 'A', 100)
-      deskService.offerLay(theDesk, 6, t2, 'AA', 160)
-      deskService.offerLay(theDesk, 7, t3, 'AAA', 170)
+      deskService.offerLayToDesk(theDesk, 5, t1, 'A', 100)
+      deskService.offerLayToDesk(theDesk, 6, t2, 'AA', 160)
+      deskService.offerLayToDesk(theDesk, 7, t3, 'AAA', 170)
       expect(theDesk).toEqual(
         {
-          sellHead: {
+          lays: {
             price: 5, amount: 100, ts: t1, trader: 'A',
             next: {
               price: 6, amount: 160, ts: t2, trader: 'AA',
@@ -206,10 +206,10 @@ describe("Adding offers to an offer list of 3 offers with incremental prices [5,
   );
 
   test('Adding 4', () => {
-    deskService.offerLay(theDesk, 4, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 4, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 4, amount: 300, ts: tx, trader: 'X',
           next: {
             price: 5, amount: 100, ts: t1, trader: 'A',
@@ -226,10 +226,10 @@ describe("Adding offers to an offer list of 3 offers with incremental prices [5,
   })
 
   test('Adding 5', () => {
-    deskService.offerLay(theDesk, 5, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 5, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 5, amount: 100, ts: t1, trader: 'A',
           next: {
             price: 5, amount: 300, ts: tx, trader: 'X',
@@ -246,10 +246,10 @@ describe("Adding offers to an offer list of 3 offers with incremental prices [5,
   })
 
   test('Adding 6', () => {
-    deskService.offerLay(theDesk, 6, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 6, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 5, amount: 100, ts: t1, trader: 'A',
           next: {
             price: 6, amount: 160, ts: t2, trader: 'AA',
@@ -266,10 +266,10 @@ describe("Adding offers to an offer list of 3 offers with incremental prices [5,
   })
 
   test('Adding 7', () => {
-    deskService.offerLay(theDesk, 7, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 7, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 5, amount: 100, ts: t1, trader: 'A',
           next: {
             price: 6, amount: 160, ts: t2, trader: 'AA',
@@ -286,10 +286,10 @@ describe("Adding offers to an offer list of 3 offers with incremental prices [5,
   })
 
   test('Adding 8', () => {
-    deskService.offerLay(theDesk, 8, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 8, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 5, amount: 100, ts: t1, trader: 'A',
           next: {
             price: 6, amount: 160, ts: t2, trader: 'AA',
@@ -320,15 +320,15 @@ describe("Adding offers to a list of repetitions [5,5,6,6,7,7]", () => {
       t5 = t4 + 1;
       t6 = t5 + 1;
       tx = t6 + 1;
-      deskService.offerLay(theDesk, 7, t1, 'AAA', 170)
-      deskService.offerLay(theDesk, 7, t2, 'AAA7', 180)
-      deskService.offerLay(theDesk, 5, t3, 'A', 100)
-      deskService.offerLay(theDesk, 5, t4, 'A5', 120)
-      deskService.offerLay(theDesk, 6, t5, 'AA', 140)
-      deskService.offerLay(theDesk, 6, t6, 'AA6', 155)
+      deskService.offerLayToDesk(theDesk, 7, t1, 'AAA', 170)
+      deskService.offerLayToDesk(theDesk, 7, t2, 'AAA7', 180)
+      deskService.offerLayToDesk(theDesk, 5, t3, 'A', 100)
+      deskService.offerLayToDesk(theDesk, 5, t4, 'A5', 120)
+      deskService.offerLayToDesk(theDesk, 6, t5, 'AA', 140)
+      deskService.offerLayToDesk(theDesk, 6, t6, 'AA6', 155)
       expect(theDesk).toEqual(
         {
-          sellHead: {
+          lays: {
             price: 5, ts: t3, trader: 'A', amount: 100,
             next: {
               price: 5, ts: t4, trader: 'A5', amount: 120,
@@ -351,10 +351,10 @@ describe("Adding offers to a list of repetitions [5,5,6,6,7,7]", () => {
   );
 
   test('Adding 4', () => {
-    deskService.offerLay(theDesk, 4, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 4, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 4, ts: tx, trader: 'X', amount: 300,
           next: {
             price: 5, ts: t3, trader: 'A', amount: 100,
@@ -380,10 +380,10 @@ describe("Adding offers to a list of repetitions [5,5,6,6,7,7]", () => {
   })
 
   test('Adding 5', () => {
-    deskService.offerLay(theDesk, 5, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 5, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 5, ts: t3, trader: 'A', amount: 100,
           next: {
             price: 5, ts: t4, trader: 'A5', amount: 120,
@@ -409,10 +409,10 @@ describe("Adding offers to a list of repetitions [5,5,6,6,7,7]", () => {
   })
 
   test('Adding 6', () => {
-    deskService.offerLay(theDesk, 6, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 6, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 5, ts: t3, trader: 'A', amount: 100,
           next: {
             price: 5, ts: t4, trader: 'A5', amount: 120,
@@ -438,10 +438,10 @@ describe("Adding offers to a list of repetitions [5,5,6,6,7,7]", () => {
   })
 
   test('Adding 7', () => {
-    deskService.offerLay(theDesk, 7, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 7, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 5, ts: t3, trader: 'A', amount: 100,
           next: {
             price: 5, ts: t4, trader: 'A5', amount: 120,
@@ -467,10 +467,10 @@ describe("Adding offers to a list of repetitions [5,5,6,6,7,7]", () => {
   })
 
   test('Adding 8', () => {
-    deskService.offerLay(theDesk, 8, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 8, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 5, ts: t3, trader: 'A', amount: 100,
           next: {
             price: 5, ts: t4, trader: 'A5', amount: 120,
@@ -507,11 +507,11 @@ describe("Adding offers to a list of offers with a wide price gap [5,7]", () => 
       t1 = Date.now()
       t2 = t1 + 1;
       tx = t2 + 1;
-      deskService.offerLay(theDesk, 7, t1, 'AA', 170)
-      deskService.offerLay(theDesk, 5, t2, 'A', 120)
+      deskService.offerLayToDesk(theDesk, 7, t1, 'AA', 170)
+      deskService.offerLayToDesk(theDesk, 5, t2, 'A', 120)
       expect(theDesk).toEqual(
         {
-          sellHead: {
+          lays: {
             price: 5, ts: t2, trader: 'A', amount: 120,
             next: {
               price: 7, ts: t1, trader: 'AA', amount: 170,
@@ -522,10 +522,10 @@ describe("Adding offers to a list of offers with a wide price gap [5,7]", () => 
   );
 
   test('Adding 4', () => {
-    deskService.offerLay(theDesk, 4, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 4, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 4, ts: tx, trader: 'X', amount: 300,
           next: {
             price: 5, ts: t2, trader: 'A', amount: 120,
@@ -539,10 +539,10 @@ describe("Adding offers to a list of offers with a wide price gap [5,7]", () => 
   })
 
   test('Adding 5', () => {
-    deskService.offerLay(theDesk, 5, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 5, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 5, ts: t2, trader: 'A', amount: 120,
           next: {
             price: 5, ts: tx, trader: 'X', amount: 300,
@@ -556,10 +556,10 @@ describe("Adding offers to a list of offers with a wide price gap [5,7]", () => 
   })
 
   test('Adding 6', () => {
-    deskService.offerLay(theDesk, 6, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 6, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 5, ts: t2, trader: 'A', amount: 120,
           next: {
             price: 6, ts: tx, trader: 'X', amount: 300,
@@ -573,10 +573,10 @@ describe("Adding offers to a list of offers with a wide price gap [5,7]", () => 
   })
 
   test('Adding 7', () => {
-    deskService.offerLay(theDesk, 7, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 7, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 5, ts: t2, trader: 'A', amount: 120,
           next: {
             price: 7, ts: t1, trader: 'AA', amount: 170,
@@ -590,10 +590,10 @@ describe("Adding offers to a list of offers with a wide price gap [5,7]", () => 
   })
 
   test('Adding 8', () => {
-    deskService.offerLay(theDesk, 8, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 8, tx, 'X', 300)
     expect(theDesk).toEqual(
       {
-        sellHead: {
+        lays: {
           price: 5, ts: t2, trader: 'A', amount: 120,
           next: {
             price: 7, ts: t1, trader: 'AA', amount: 170,

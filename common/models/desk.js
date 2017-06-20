@@ -8,38 +8,44 @@ module.exports = function (Desk) {
     return "yes"
   }
 
-  // back side
-  function back(targetDesk, price, now, trader, amount) {
-    let backed = 0
-    let offer = targetDesk.buyHead;
-    while (offer && offer.price <= price && amount > 0) {
+  function match(offer, price, amount, trader, now, comparator) {
+    let matched = 0
+    while (offer && comparator(offer.price) && amount > 0) {
       let transaction;
       if (amount < offer.amount) {
         transaction = {
-          buyer: trader,
-          seller: offer.trader,
+          offeror: offer.trader,
+          taker: trader,
           amount: amount,
           ts: now,
         }
         offer.amount -= amount
-        backed += amount
+        matched += amount
       } else {
         transaction = {
-          buyer: trader,
-          seller: offer.trader,
+          offeror: offer.trader,
+          taker: trader,
           amount: offer.amount,
           ts: now,
         }
         amount -= offer.amount
-        backed += offer.amount
+        matched += offer.amount
         offer = offer.next
       }
     }
-    return backed;
+    return matched;
+  }
+
+  function back(targetDesk, price, now, trader, amount) {
+    return match(targetDesk.backs, price, amount, trader, now, (offerPrice) => offerPrice <= price);
+  }
+
+  function lay(targetDesk, price, now, trader, amount) {
+    return match(targetDesk.lays, price, amount, trader, now, (offerPrice) => offerPrice >= price);
   }
 
   // Lay
-  Desk.offerLay = function addSellOfferToDesk(targetDesk, price, now, trader, amount) {
+  Desk.offerLayToDesk = function offerLayToDesk(targetDesk, price, now, trader, amount) {
     let backed = back(targetDesk, price, now, trader, amount)
     amount = amount - backed;
 
@@ -50,15 +56,15 @@ module.exports = function (Desk) {
       price: price,
     }
 
-    if (!targetDesk.sellHead) {
-      targetDesk.sellHead = offer
+    if (!targetDesk.lays) {
+      targetDesk.lays = offer
     } else {
       let cur
-      let next = targetDesk.sellHead
+      let next = targetDesk.lays
 
       if (price < next.price) {
-        offer.next = targetDesk.sellHead
-        targetDesk.sellHead = offer
+        offer.next = targetDesk.lays
+        targetDesk.lays = offer
         return
       }
       cur = next
@@ -79,7 +85,7 @@ module.exports = function (Desk) {
     }
   }
 
-  Desk.sellOffer = function (deskId, trader, price, amount, callback) {
+  Desk.layOffer = function (deskId, trader, price, amount, callback) {
     let message = `deskId=${deskId} trader=${trader} minPrice=${price} amount=${amount}`;
     console.log(message);
     if (
@@ -99,16 +105,16 @@ module.exports = function (Desk) {
         return callback(new Error(`Desk not found , with Id=${deskId}`))
       }
       targetDesk = {};
-      offerLay(targetDesk, price, now, trader, amount);
+      offerLayToDesk(targetDesk, price, now, trader, amount);
 
       return callback(null, targetDesk)
     }
   };
 
   Desk.remoteMethod(
-    'sellOffer',
+    'layOffer',
     {
-      http: {path: '/sellOffer', verb: 'post'},
+      http: {path: '/layOffer', verb: 'post'},
       accepts: [
         {arg: 'id', type: 'String', required: true},
         {arg: 'trader', type: 'String', required: true},
