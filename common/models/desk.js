@@ -8,8 +8,9 @@ module.exports = function (Desk) {
     return "yes"
   }
 
-  function sell(targetDesk, price, now, trader, amount) {
-    let sold = 0
+  // back side
+  function back(targetDesk, price, now, trader, amount) {
+    let backed = 0
     let offer = targetDesk.buyHead;
     while (offer && offer.price <= price && amount > 0) {
       let transaction;
@@ -21,7 +22,7 @@ module.exports = function (Desk) {
           ts: now,
         }
         offer.amount -= amount
-        sold += amount
+        backed += amount
       } else {
         transaction = {
           buyer: trader,
@@ -30,16 +31,17 @@ module.exports = function (Desk) {
           ts: now,
         }
         amount -= offer.amount
-        sold += offer.amount
+        backed += offer.amount
         offer = offer.next
       }
     }
-    return sold;
+    return backed;
   }
 
-  Desk.addSellOfferToDesk = function addSellOfferToDesk(targetDesk, price, now, trader, amount) {
-    let sold = sell(targetDesk, price, now, trader, amount)
-    amount = amount - sold;
+  // Lay
+  Desk.offerLay = function addSellOfferToDesk(targetDesk, price, now, trader, amount) {
+    let backed = back(targetDesk, price, now, trader, amount)
+    amount = amount - backed;
 
     let offer = {
       ts: now,
@@ -97,7 +99,7 @@ module.exports = function (Desk) {
         return callback(new Error(`Desk not found , with Id=${deskId}`))
       }
       targetDesk = {};
-      addSellOfferToDesk(targetDesk, price, now, trader, amount);
+      offerLay(targetDesk, price, now, trader, amount);
 
       return callback(null, targetDesk)
     }
