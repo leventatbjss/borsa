@@ -4,20 +4,16 @@ var SortedMap = require("collections/sorted-map");
 
 module.exports = function (Desk) {
 
-  Desk.available = function available() {
-    return "yes"
-  }
-
-  function match(offer, price, amount, trader, now, comparator) {
+  function match(offer, price, amount, trader, ts, comparator) {
     let matched = 0
     while (offer && comparator(offer.price) && amount > 0) {
       let trade;
       if (amount < offer.amount) {
-        trade = {offeror: offer.trader, taker: trader, price: price, amount: amount, ts: now,}
+        trade = {offeror: offer.trader, taker: trader, price: price, amount: amount, ts: ts,}
         offer.amount -= amount
         matched += amount
       } else {
-        trade = {offeror: offer.trader, taker: trader, price: price, amount: offer.amount, ts: now,}
+        trade = {offeror: offer.trader, taker: trader, price: price, amount: offer.amount, ts: ts,}
         amount -= offer.amount
         matched += offer.amount
         offer = offer.next
@@ -29,27 +25,27 @@ module.exports = function (Desk) {
   function offerToDesk(offer, head, headSetter, comparator) {
     if (!head) {
       headSetter(offer)
-    } else {
-      if (comparator(offer.price, head.price)) {
-        offer.next = head
-        headSetter(offer)
-      } else {
-        let cur = head
-        let next = head.next
-        while (true) {
-          if (!next) {
-            cur.next = offer
-            break
-          }
-          if (comparator(offer.price, next.price, cur.price)) {
-            cur.next = offer
-            offer.next = next
-            break
-          }
-          cur = next;
-          next = cur.next
-        }
+      return
+    }
+    if (comparator(offer.price, head.price)) {
+      offer.next = head
+      headSetter(offer)
+      return
+    }
+    let cur = head
+    let next = head.next
+    while (true) {
+      if (!next) {
+        cur.next = offer
+        return
       }
+      if (comparator(offer.price, next.price, cur.price)) {
+        cur.next = offer
+        offer.next = next
+        return
+      }
+      cur = next;
+      next = cur.next
     }
   }
 
@@ -69,7 +65,15 @@ module.exports = function (Desk) {
       (price, nextPrice, curPrice) => price < nextPrice || (price < nextPrice && (curPrice && price >= curPrice)));
   }
 
-  Desk.layOffer = function (deskId, trader, price, amount, callback) {
+  Desk.offerBackToDesk = function offerBackToDesk(targetDesk, price, now, trader, amount) {
+    amount = amount - lay(targetDesk, price, now, trader, amount);
+    let offer = {ts: now, trader: trader, amount: amount, price: price,}
+    offerToDesk(offer, targetDesk.backs,
+      (offer) => targetDesk.backs = offer,
+      (price, nextPrice, curPrice) => price > nextPrice || (price > nextPrice && (curPrice && price <= curPrice)));
+  }
+
+  Desk.offerLay = function (deskId, trader, price, amount, callback) {
     let message = `deskId=${deskId} trader=${trader} minPrice=${price} amount=${amount}`;
     console.log(message);
     if (
@@ -78,7 +82,7 @@ module.exports = function (Desk) {
       price <= 0 ||
       amount <= 0
     ) {
-      let error = new Error(`Invalid request to sell. Parameters are:${message}`);
+      let error = new Error(`Invalid request to offer. Parameters are:${message}`);
       error.status = 400;
       return callback(error);
     }
@@ -89,16 +93,16 @@ module.exports = function (Desk) {
         return callback(new Error(`Desk not found , with Id=${deskId}`))
       }
       targetDesk = {};
-      offerLayToDesk(targetDesk, price, now, trader, amount);
+      Desk.offerLayToDesk(targetDesk, price, now, trader, amount);
 
       return callback(null, targetDesk)
     }
   };
 
   Desk.remoteMethod(
-    'layOffer',
+    'offerLay',
     {
-      http: {path: '/layOffer', verb: 'post'},
+      http: {path: '/offerLay', verb: 'post'},
       accepts: [
         {arg: 'id', type: 'String', required: true},
         {arg: 'trader', type: 'String', required: true},
@@ -126,32 +130,8 @@ module.exports = function (Desk) {
   //   }
   // );
 
-  Desk.status = function (cb) {
-    var currentDate = new Date();
-    var currentHour = currentDate.getHours();
-    var OPEN_HOUR = 6;
-    var CLOSE_HOUR = 20;
-    console.log('Current hour is %d', currentHour);
-    var response;
-    if (currentHour > OPEN_HOUR && currentHour < CLOSE_HOUR) {
-      response = 'We are open for business.';
-    } else {
-      response = 'Sorry, we are closed. Open daily from 6am to 8pm.';
-    }
-    cb(null, response);
-  };
-
-  Desk.remoteMethod(
-    'status', {
-      http: {
-        path: '/status',
-        verb: 'get'
-      },
-      returns: {
-        arg: 'status',
-        type: 'string'
-      }
-    }
-  );
+  Desk.available = function available() {
+    return "yes"
+  }
 
 };
