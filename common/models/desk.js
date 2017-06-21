@@ -11,13 +11,13 @@ module.exports = function (Desk) {
   function match(offer, price, amount, trader, now, comparator) {
     let matched = 0
     while (offer && comparator(offer.price) && amount > 0) {
-      let transaction;
+      let trade;
       if (amount < offer.amount) {
-        transaction = {offeror: offer.trader, taker: trader, price: price, amount: amount, ts: now,}
+        trade = {offeror: offer.trader, taker: trader, price: price, amount: amount, ts: now,}
         offer.amount -= amount
         matched += amount
       } else {
-        transaction = {offeror: offer.trader, taker: trader, price: price, amount: offer.amount, ts: now,}
+        trade = {offeror: offer.trader, taker: trader, price: price, amount: offer.amount, ts: now,}
         amount -= offer.amount
         matched += offer.amount
         offer = offer.next
@@ -26,8 +26,7 @@ module.exports = function (Desk) {
     return matched;
   }
 
-  // function offerToDesk(headSetter, head, amount, now, trader, price, comparator) {
-  function offerToDesk(headSetter, head, comparator, offer) {
+  function offerToDesk(offer, head, headSetter, comparator) {
     if (!head) {
       headSetter(offer)
     } else {
@@ -63,15 +62,11 @@ module.exports = function (Desk) {
   }
 
   Desk.offerLayToDesk = function offerLayToDesk(targetDesk, price, now, trader, amount) {
-    let backed = back(targetDesk, price, now, trader, amount);
-    amount = amount - backed;
+    amount = amount - back(targetDesk, price, now, trader, amount);
     let offer = {ts: now, trader: trader, amount: amount, price: price,}
-    offerToDesk((offer) => targetDesk.lays = offer,targetDesk.lays, (price, nextPrice, curPrice) => {
-      if (curPrice)
-        return price >= curPrice && price < nextPrice
-      else
-        return price < nextPrice
-    }, offer);
+    offerToDesk(offer, targetDesk.lays,
+      (offer) => targetDesk.lays = offer,
+      (price, nextPrice, curPrice) => price < nextPrice || (price < nextPrice && (curPrice && price >= curPrice)));
   }
 
   Desk.layOffer = function (deskId, trader, price, amount, callback) {
