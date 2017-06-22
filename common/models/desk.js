@@ -1,21 +1,19 @@
 'use strict';
 
-var SortedMap = require("collections/sorted-map");
-
 module.exports = function (Desk) {
 
   function match(offer, price, amount, trader, ts, comparator) {
-    let matched = 0
+    let matched = 0;
     while (offer && comparator(offer.price) && amount > 0) {
       let trade;
       if (amount < offer.amount) {
-        trade = {offeror: offer.trader, taker: trader, price: price, amount: amount, ts: ts,}
-        offer.amount -= amount
+        trade = {offeror: offer.trader, taker: trader, price: price, amount: amount, ts: ts,};
+        offer.amount -= amount;
         matched += amount
       } else {
-        trade = {offeror: offer.trader, taker: trader, price: price, amount: offer.amount, ts: ts,}
-        amount -= offer.amount
-        matched += offer.amount
+        trade = {offeror: offer.trader, taker: trader, price: price, amount: offer.amount, ts: ts,};
+        amount -= offer.amount;
+        matched += offer.amount;
         offer = offer.next
       }
     }
@@ -24,24 +22,24 @@ module.exports = function (Desk) {
 
   function offerToDesk(offer, head, headSetter, comparator) {
     if (!head) {
-      headSetter(offer)
+      headSetter(offer);
       return
     }
     if (comparator(offer.price, head.price)) {
-      offer.next = head
-      headSetter(offer)
+      offer.next = head;
+      headSetter(offer);
       return
     }
-    let cur = head
-    let next = head.next
+    let cur = head;
+    let next = head.next;
     while (true) {
       if (!next) {
-        cur.next = offer
+        cur.next = offer;
         return
       }
       if (comparator(offer.price, next.price, cur.price)) {
-        cur.next = offer
-        offer.next = next
+        cur.next = offer;
+        offer.next = next;
         return
       }
       cur = next;
@@ -59,26 +57,26 @@ module.exports = function (Desk) {
 
   Desk.offerLayToDesk = function offerLayToDesk(targetDesk, price, now, trader, amount) {
     amount = amount - back(targetDesk, price, now, trader, amount);
-    let offer = {ts: now, trader: trader, amount: amount, price: price,}
+    let offer = {ts: now, trader: trader, amount: amount, price: price};
     offerToDesk(offer, targetDesk.lays,
       (offer) => targetDesk.lays = offer,
       (price, nextPrice, curPrice) => price < nextPrice || (price < nextPrice && (curPrice && price >= curPrice)));
-  }
+  };
 
   Desk.offerBackToDesk = function offerBackToDesk(targetDesk, price, now, trader, amount) {
     amount = amount - lay(targetDesk, price, now, trader, amount);
-    let offer = {ts: now, trader: trader, amount: amount, price: price,}
+    let offer = {ts: now, trader: trader, amount: amount, price: price};
     offerToDesk(offer, targetDesk.backs,
       (offer) => targetDesk.backs = offer,
       (price, nextPrice, curPrice) => price > nextPrice || (price > nextPrice && (curPrice && price <= curPrice)));
-  }
+  };
 
   Desk.offerLay = function (deskId, trader, price, amount, callback) {
     let message = `deskId=${deskId} trader=${trader} minPrice=${price} amount=${amount}`;
     console.log(message);
     if (
-      deskId == null ||
-      trader == null ||
+      !deskId ||
+      !trader ||
       price <= 0 ||
       amount <= 0
     ) {

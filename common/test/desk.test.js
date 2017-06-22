@@ -1,29 +1,28 @@
 const desk = require('../models/desk.js');
 
-let deskService
+let deskService;
 let theDesk;
 let t1;
 
 
 beforeAll(() => {
-// Hacky Initialisation
+// Initialisation hack
     deskService = {};
     deskService.remoteMethod = function () {
-    }
+    };
     desk(deskService);
   }
 );
 
 describe("Adding lay offers to a single offer list of price [5]", () => {
 
-  let baseDesk;
   let t2;
 
   beforeEach(() => {
-      theDesk = {}
-      t1 = Date.now()
-      t2 = t1 + 1000
-      deskService.offerLayToDesk(theDesk, 5, t1, 'A', 100)
+      theDesk = {};
+      t1 = Date.now();
+      t2 = t1 + 1000;
+      deskService.offerLayToDesk(theDesk, 5, t1, 'A', 100);
       expect(theDesk).toEqual(
         {
           lays: {
@@ -37,7 +36,7 @@ describe("Adding lay offers to a single offer list of price [5]", () => {
   );
 
   test('Adding 4', () => {
-    deskService.offerLayToDesk(theDesk, 4, t2, 'B', 200)
+    deskService.offerLayToDesk(theDesk, 4, t2, 'B', 200);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -53,10 +52,10 @@ describe("Adding lay offers to a single offer list of price [5]", () => {
           }
         }
       })
-  })
+  });
 
   test('Adding 5', () => {
-      deskService.offerLayToDesk(theDesk, 5, t2, 'B', 200)
+      deskService.offerLayToDesk(theDesk, 5, t2, 'B', 200);
       expect(theDesk).toEqual(
         {
           lays: {
@@ -76,7 +75,7 @@ describe("Adding lay offers to a single offer list of price [5]", () => {
   );
 
   test('Adding 6', () => {
-      deskService.offerLayToDesk(theDesk, 6, t2, 'C', 150)
+      deskService.offerLayToDesk(theDesk, 6, t2, 'C', 150);
       expect(theDesk).toEqual(
         {
           lays: {
@@ -99,16 +98,15 @@ describe("Adding lay offers to a single offer list of price [5]", () => {
 
 describe("Adding lay offers to an offer list of 2 offers with same price [5,5]", () => {
 
-  let baseDesk;
   let t2, t3;
 
   beforeEach(() => {
-      theDesk = {}
-      t1 = Date.now()
-      t2 = t1 + 1000
-      t3 = t2 + 1000
-      deskService.offerLayToDesk(theDesk, 5, t1, 'A', 100)
-      deskService.offerLayToDesk(theDesk, 5, t2, 'AA', 160)
+      theDesk = {};
+      t1 = Date.now();
+      t2 = t1 + 1000;
+      t3 = t2 + 1000;
+      deskService.offerLayToDesk(theDesk, 5, t1, 'A', 100);
+      deskService.offerLayToDesk(theDesk, 5, t2, 'AA', 160);
       expect(theDesk).toEqual(
         {
           lays: {
@@ -122,7 +120,7 @@ describe("Adding lay offers to an offer list of 2 offers with same price [5,5]",
   );
 
   test('Adding 4', () => {
-    deskService.offerLayToDesk(theDesk, 4, t3, 'B', 200)
+    deskService.offerLayToDesk(theDesk, 4, t3, 'B', 200);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -136,10 +134,10 @@ describe("Adding lay offers to an offer list of 2 offers with same price [5,5]",
         }
       }
     )
-  })
+  });
 
   test('Adding 5', () => {
-      deskService.offerLayToDesk(theDesk, 5, t3, 'B', 200)
+      deskService.offerLayToDesk(theDesk, 5, t3, 'B', 200);
       expect(theDesk).toEqual(
         {
           lays: {
@@ -157,7 +155,7 @@ describe("Adding lay offers to an offer list of 2 offers with same price [5,5]",
   );
 
   test('Adding 6', () => {
-      deskService.offerLayToDesk(theDesk, 6, t3, 'C', 250)
+      deskService.offerLayToDesk(theDesk, 6, t3, 'C', 250);
       expect(theDesk).toEqual(
         {
           lays: {
@@ -178,18 +176,17 @@ describe("Adding lay offers to an offer list of 2 offers with same price [5,5]",
 
 describe("Adding lay offers to an offer list of 3 offers with incremental prices [5,6,7]", () => {
 
-  let baseDesk;
   let t2, t3, tx;
 
   beforeEach(() => {
-      theDesk = {}
-      t1 = Date.now()
-      t2 = t1 + 1000
-      t3 = t2 + 1000
-      tx = t3 + 1000
-      deskService.offerLayToDesk(theDesk, 5, t1, 'A', 100)
-      deskService.offerLayToDesk(theDesk, 6, t2, 'AA', 160)
-      deskService.offerLayToDesk(theDesk, 7, t3, 'AAA', 170)
+      theDesk = {};
+      t1 = Date.now();
+      t2 = t1 + 1000;
+      t3 = t2 + 1000;
+      tx = t3 + 1000;
+      deskService.offerLayToDesk(theDesk, 5, t1, 'A', 100);
+      deskService.offerLayToDesk(theDesk, 6, t2, 'AA', 160);
+      deskService.offerLayToDesk(theDesk, 7, t3, 'AAA', 170);
       expect(theDesk).toEqual(
         {
           lays: {
@@ -206,7 +203,7 @@ describe("Adding lay offers to an offer list of 3 offers with incremental prices
   );
 
   test('Adding 4', () => {
-    deskService.offerLayToDesk(theDesk, 4, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 4, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -223,10 +220,10 @@ describe("Adding lay offers to an offer list of 3 offers with incremental prices
         }
       }
     )
-  })
+  });
 
   test('Adding 5', () => {
-    deskService.offerLayToDesk(theDesk, 5, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 5, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -243,10 +240,10 @@ describe("Adding lay offers to an offer list of 3 offers with incremental prices
         }
       }
     )
-  })
+  });
 
   test('Adding 6', () => {
-    deskService.offerLayToDesk(theDesk, 6, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 6, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -263,10 +260,10 @@ describe("Adding lay offers to an offer list of 3 offers with incremental prices
         }
       }
     )
-  })
+  });
 
   test('Adding 7', () => {
-    deskService.offerLayToDesk(theDesk, 7, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 7, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -283,10 +280,10 @@ describe("Adding lay offers to an offer list of 3 offers with incremental prices
         }
       }
     )
-  })
+  });
 
   test('Adding 8', () => {
-    deskService.offerLayToDesk(theDesk, 8, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 8, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -308,24 +305,23 @@ describe("Adding lay offers to an offer list of 3 offers with incremental prices
 
 describe("Adding lay offers to a list of repetitions [5,5,6,6,7,7]", () => {
 
-  let baseDesk;
   let t2, t3, t4, t5, t6, tx;
 
   beforeEach(() => {
-      theDesk = {}
-      t1 = Date.now()
+      theDesk = {};
+      t1 = Date.now();
       t2 = t1 + 1;
       t3 = t2 + 1;
       t4 = t3 + 1;
       t5 = t4 + 1;
       t6 = t5 + 1;
       tx = t6 + 1;
-      deskService.offerLayToDesk(theDesk, 7, t1, 'AAA', 170)
-      deskService.offerLayToDesk(theDesk, 7, t2, 'AAA7', 180)
-      deskService.offerLayToDesk(theDesk, 5, t3, 'A', 100)
-      deskService.offerLayToDesk(theDesk, 5, t4, 'A5', 120)
-      deskService.offerLayToDesk(theDesk, 6, t5, 'AA', 140)
-      deskService.offerLayToDesk(theDesk, 6, t6, 'AA6', 155)
+      deskService.offerLayToDesk(theDesk, 7, t1, 'AAA', 170);
+      deskService.offerLayToDesk(theDesk, 7, t2, 'AAA7', 180);
+      deskService.offerLayToDesk(theDesk, 5, t3, 'A', 100);
+      deskService.offerLayToDesk(theDesk, 5, t4, 'A5', 120);
+      deskService.offerLayToDesk(theDesk, 6, t5, 'AA', 140);
+      deskService.offerLayToDesk(theDesk, 6, t6, 'AA6', 155);
       expect(theDesk).toEqual(
         {
           lays: {
@@ -351,7 +347,7 @@ describe("Adding lay offers to a list of repetitions [5,5,6,6,7,7]", () => {
   );
 
   test('Adding 4', () => {
-    deskService.offerLayToDesk(theDesk, 4, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 4, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -377,10 +373,10 @@ describe("Adding lay offers to a list of repetitions [5,5,6,6,7,7]", () => {
         }
       }
     )
-  })
+  });
 
   test('Adding 5', () => {
-    deskService.offerLayToDesk(theDesk, 5, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 5, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -406,10 +402,10 @@ describe("Adding lay offers to a list of repetitions [5,5,6,6,7,7]", () => {
         }
       }
     )
-  })
+  });
 
   test('Adding 6', () => {
-    deskService.offerLayToDesk(theDesk, 6, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 6, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -435,10 +431,10 @@ describe("Adding lay offers to a list of repetitions [5,5,6,6,7,7]", () => {
         }
       }
     )
-  })
+  });
 
   test('Adding 7', () => {
-    deskService.offerLayToDesk(theDesk, 7, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 7, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -464,10 +460,10 @@ describe("Adding lay offers to a list of repetitions [5,5,6,6,7,7]", () => {
         }
       }
     )
-  })
+  });
 
   test('Adding 8', () => {
-    deskService.offerLayToDesk(theDesk, 8, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 8, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -499,16 +495,15 @@ describe("Adding lay offers to a list of repetitions [5,5,6,6,7,7]", () => {
 
 describe("Adding lay offers to a list of offers with a wide price gap [5,7]", () => {
 
-  let baseDesk;
   let t2, tx;
 
   beforeEach(() => {
-      theDesk = {}
-      t1 = Date.now()
+      theDesk = {};
+      t1 = Date.now();
       t2 = t1 + 1;
       tx = t2 + 1;
-      deskService.offerLayToDesk(theDesk, 7, t1, 'AA', 170)
-      deskService.offerLayToDesk(theDesk, 5, t2, 'A', 120)
+      deskService.offerLayToDesk(theDesk, 7, t1, 'AA', 170);
+      deskService.offerLayToDesk(theDesk, 5, t2, 'A', 120);
       expect(theDesk).toEqual(
         {
           lays: {
@@ -522,7 +517,7 @@ describe("Adding lay offers to a list of offers with a wide price gap [5,7]", ()
   );
 
   test('Adding 4', () => {
-    deskService.offerLayToDesk(theDesk, 4, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 4, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -536,10 +531,10 @@ describe("Adding lay offers to a list of offers with a wide price gap [5,7]", ()
         }
       }
     )
-  })
+  });
 
   test('Adding 5', () => {
-    deskService.offerLayToDesk(theDesk, 5, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 5, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -553,10 +548,10 @@ describe("Adding lay offers to a list of offers with a wide price gap [5,7]", ()
         }
       }
     )
-  })
+  });
 
   test('Adding 6', () => {
-    deskService.offerLayToDesk(theDesk, 6, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 6, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -570,10 +565,10 @@ describe("Adding lay offers to a list of offers with a wide price gap [5,7]", ()
         }
       }
     )
-  })
+  });
 
   test('Adding 7', () => {
-    deskService.offerLayToDesk(theDesk, 7, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 7, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -587,10 +582,10 @@ describe("Adding lay offers to a list of offers with a wide price gap [5,7]", ()
         }
       }
     )
-  })
+  });
 
   test('Adding 8', () => {
-    deskService.offerLayToDesk(theDesk, 8, tx, 'X', 300)
+    deskService.offerLayToDesk(theDesk, 8, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         lays: {
@@ -606,28 +601,27 @@ describe("Adding lay offers to a list of offers with a wide price gap [5,7]", ()
     )
   })
 
-})
+});
 
 describe("Adding back offers to a list of repetitions [5,5,6,6,7,7]", () => {
 
-  let baseDesk;
   let t2, t3, t4, t5, t6, tx;
 
   beforeEach(() => {
-      theDesk = {}
-      t1 = Date.now()
+      theDesk = {};
+      t1 = Date.now();
       t2 = t1 + 1;
       t3 = t2 + 1;
       t4 = t3 + 1;
       t5 = t4 + 1;
       t6 = t5 + 1;
       tx = t6 + 1;
-      deskService.offerBackToDesk(theDesk, 7, t1, 'AAA', 170)
-      deskService.offerBackToDesk(theDesk, 7, t2, 'AAA7', 180)
-      deskService.offerBackToDesk(theDesk, 5, t3, 'A', 100)
-      deskService.offerBackToDesk(theDesk, 5, t4, 'A5', 120)
-      deskService.offerBackToDesk(theDesk, 6, t5, 'AA', 140)
-      deskService.offerBackToDesk(theDesk, 6, t6, 'AA6', 155)
+      deskService.offerBackToDesk(theDesk, 7, t1, 'AAA', 170);
+      deskService.offerBackToDesk(theDesk, 7, t2, 'AAA7', 180);
+      deskService.offerBackToDesk(theDesk, 5, t3, 'A', 100);
+      deskService.offerBackToDesk(theDesk, 5, t4, 'A5', 120);
+      deskService.offerBackToDesk(theDesk, 6, t5, 'AA', 140);
+      deskService.offerBackToDesk(theDesk, 6, t6, 'AA6', 155);
       expect(theDesk).toEqual(
         {
           backs: {
@@ -648,7 +642,7 @@ describe("Adding back offers to a list of repetitions [5,5,6,6,7,7]", () => {
   );
 
   test('Adding 4', () => {
-    deskService.offerBackToDesk(theDesk, 4, tx, 'X', 300)
+    deskService.offerBackToDesk(theDesk, 4, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         backs: {
@@ -668,10 +662,10 @@ describe("Adding back offers to a list of repetitions [5,5,6,6,7,7]", () => {
         }
       }
     )
-  })
+  });
 
   test('Adding 5', () => {
-    deskService.offerBackToDesk(theDesk, 5, tx, 'X', 300)
+    deskService.offerBackToDesk(theDesk, 5, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         backs: {
@@ -691,10 +685,10 @@ describe("Adding back offers to a list of repetitions [5,5,6,6,7,7]", () => {
         }
       }
     )
-  })
+  });
 
   test('Adding 6', () => {
-    deskService.offerBackToDesk(theDesk, 6, tx, 'X', 300)
+    deskService.offerBackToDesk(theDesk, 6, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         backs: {
@@ -714,10 +708,10 @@ describe("Adding back offers to a list of repetitions [5,5,6,6,7,7]", () => {
         }
       }
     )
-  })
+  });
 
   test('Adding 7', () => {
-    deskService.offerBackToDesk(theDesk, 7, tx, 'X', 300)
+    deskService.offerBackToDesk(theDesk, 7, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         backs: {
@@ -737,10 +731,10 @@ describe("Adding back offers to a list of repetitions [5,5,6,6,7,7]", () => {
         }
       }
     )
-  })
+  });
 
   test('Adding 8', () => {
-    deskService.offerBackToDesk(theDesk, 8, tx, 'X', 300)
+    deskService.offerBackToDesk(theDesk, 8, tx, 'X', 300);
     expect(theDesk).toEqual(
       {
         backs: {
@@ -761,7 +755,6 @@ describe("Adding back offers to a list of repetitions [5,5,6,6,7,7]", () => {
       }
     )
   })
-
 
 
 });
