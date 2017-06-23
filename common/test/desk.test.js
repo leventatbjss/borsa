@@ -1,18 +1,7 @@
-const desk = require('../models/desk.js');
+const deskService = require('../models/desk-service.js');
 
-let deskService;
 let theDesk;
 let t1;
-
-
-beforeAll(() => {
-// Initialisation hack
-    deskService = {};
-    deskService.remoteMethod = function () {
-    };
-    desk(deskService);
-  }
-);
 
 describe("Adding lay offers to a single offer list of price [5]", () => {
 
@@ -759,8 +748,160 @@ describe("Adding back offers to a list of repetitions [5,5,6,6,7,7]", () => {
 
 });
 
+describe("Adding back offers to a list of repetitions [5,5,6,6,7,7]", () => {
 
-test('Testing desk available', () => {
-    expect(deskService.available()).toBe("yes")
-  }
-);
+  let t2, t3, t4, t5, t6, tx;
+
+  beforeEach(() => {
+      theDesk = {};
+      t1 = Date.now();
+      t2 = t1 + 1;
+      t3 = t2 + 1;
+      t4 = t3 + 1;
+      t5 = t4 + 1;
+      t6 = t5 + 1;
+      tx = t6 + 1;
+      deskService.offerBackToDesk(theDesk, 7, t1, 'AAA', 170);
+      deskService.offerBackToDesk(theDesk, 7, t2, 'AAA7', 180);
+      deskService.offerBackToDesk(theDesk, 5, t3, 'A', 100);
+      deskService.offerBackToDesk(theDesk, 5, t4, 'A5', 120);
+      deskService.offerBackToDesk(theDesk, 6, t5, 'AA', 140);
+      deskService.offerBackToDesk(theDesk, 6, t6, 'AA6', 155);
+      expect(theDesk).toEqual(
+        {
+          backs: {
+            price: 7, ts: t1, trader: 'AAA', amount: 170, next: {
+              price: 7, ts: t2, trader: 'AAA7', amount: 180, next: {
+                price: 6, ts: t5, trader: 'AA', amount: 140, next: {
+                  price: 6, ts: t6, trader: 'AA6', amount: 155, next: {
+                    price: 5, ts: t3, trader: 'A', amount: 100, next: {
+                      price: 5, ts: t4, trader: 'A5', amount: 120,
+                    }
+                  }
+                }
+              }
+            }
+          }
+        })
+    }
+  );
+
+  test('Adding 4', () => {
+    deskService.offerBackToDesk(theDesk, 4, tx, 'X', 300);
+    expect(theDesk).toEqual(
+      {
+        backs: {
+          price: 7, ts: t1, trader: 'AAA', amount: 170, next: {
+            price: 7, ts: t2, trader: 'AAA7', amount: 180, next: {
+              price: 6, ts: t5, trader: 'AA', amount: 140, next: {
+                price: 6, ts: t6, trader: 'AA6', amount: 155, next: {
+                  price: 5, ts: t3, trader: 'A', amount: 100, next: {
+                    price: 5, ts: t4, trader: 'A5', amount: 120, next: {
+                      price: 4, ts: tx, trader: 'X', amount: 300,
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    )
+  });
+
+  test('Adding 5', () => {
+    deskService.offerBackToDesk(theDesk, 5, tx, 'X', 300);
+    expect(theDesk).toEqual(
+      {
+        backs: {
+          price: 7, ts: t1, trader: 'AAA', amount: 170, next: {
+            price: 7, ts: t2, trader: 'AAA7', amount: 180, next: {
+              price: 6, ts: t5, trader: 'AA', amount: 140, next: {
+                price: 6, ts: t6, trader: 'AA6', amount: 155, next: {
+                  price: 5, ts: t3, trader: 'A', amount: 100, next: {
+                    price: 5, ts: t4, trader: 'A5', amount: 120, next: {
+                      price: 5, ts: tx, trader: 'X', amount: 300,
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    )
+  });
+
+  test('Adding 6', () => {
+    deskService.offerBackToDesk(theDesk, 6, tx, 'X', 300);
+    expect(theDesk).toEqual(
+      {
+        backs: {
+          price: 7, ts: t1, trader: 'AAA', amount: 170, next: {
+            price: 7, ts: t2, trader: 'AAA7', amount: 180, next: {
+              price: 6, ts: t5, trader: 'AA', amount: 140, next: {
+                price: 6, ts: t6, trader: 'AA6', amount: 155, next: {
+                  price: 6, ts: tx, trader: 'X', amount: 300, next: {
+                    price: 5, ts: t3, trader: 'A', amount: 100, next: {
+                      price: 5, ts: t4, trader: 'A5', amount: 120,
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    )
+  });
+
+  test('Adding 7', () => {
+    deskService.offerBackToDesk(theDesk, 7, tx, 'X', 300);
+    expect(theDesk).toEqual(
+      {
+        backs: {
+          price: 7, ts: t1, trader: 'AAA', amount: 170, next: {
+            price: 7, ts: t2, trader: 'AAA7', amount: 180, next: {
+              price: 7, ts: tx, trader: 'X', amount: 300, next: {
+                price: 6, ts: t5, trader: 'AA', amount: 140, next: {
+                  price: 6, ts: t6, trader: 'AA6', amount: 155, next: {
+                    price: 5, ts: t3, trader: 'A', amount: 100, next: {
+                      price: 5, ts: t4, trader: 'A5', amount: 120,
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    )
+  });
+
+  test('Adding 8', () => {
+    deskService.offerBackToDesk(theDesk, 8, tx, 'X', 300);
+    expect(theDesk).toEqual(
+      {
+        backs: {
+          price: 8, ts: tx, trader: 'X', amount: 300, next: {
+            price: 7, ts: t1, trader: 'AAA', amount: 170, next: {
+              price: 7, ts: t2, trader: 'AAA7', amount: 180, next: {
+                price: 6, ts: t5, trader: 'AA', amount: 140, next: {
+                  price: 6, ts: t6, trader: 'AA6', amount: 155, next: {
+                    price: 5, ts: t3, trader: 'A', amount: 100, next: {
+                      price: 5, ts: t4, trader: 'A5', amount: 120,
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    )
+  })
+
+
+});
+
+//
